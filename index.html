@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ki Alfajor - Nuvem</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <aside class="sidebar no-print">
+            <div class="brand">
+                <div class="logo">KI</div>
+                <span>Ki Alfajor</span>
+            </div>
+            <nav>
+                <button id="btn-vendas" class="nav-btn active">
+                    <span class="material-icons">rocket_launch</span> Performance
+                </button>
+                <button id="btn-calculadora" class="nav-btn">
+                    <span class="material-icons">calculate</span> Painel de Custos
+                </button>
+            </nav>
+            <div class="sidebar-footer">
+                <button id="btnSalvarGlobal" class="btn-save-global">☁️ Sincronizar Tudo</button>
+                <p style="font-size:0.7rem; color:#aaa; text-align:center; margin-top:5px;">Dados na Nuvem</p>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            
+            <div id="tab-vendas" class="tab-content active">
+                <header class="header">
+                    <h2>🚀 Performance (Tempo Real)</h2>
+                </header>
+
+                <div class="stats-grid">
+                    <div class="card stat">
+                        <label>Meta (R$)</label>
+                        <input type="number" id="metaMes" value="5000" style="font-weight:bold; font-size:1.2rem; border:none; background:transparent; color:var(--primary);">
+                    </div>
+                    <div class="card stat highlight" style="border-top: 4px solid var(--green);">
+                        <label>Faturamento</label>
+                        <h2 id="faturamentoTotal" style="color: var(--green);">R$ 0,00</h2>
+                    </div>
+                    <div class="card stat highlight" style="border-top: 4px solid var(--blue);">
+                        <label>Ticket Médio</label>
+                        <h2 id="ticketMedio" style="color: var(--blue);">R$ 0,00</h2>
+                    </div>
+                </div>
+
+                <div class="main-grid">
+                    <div class="card config-panel">
+                        <h3 id="tituloFormulario" style="margin-bottom: 15px;">Nova Venda</h3>
+                        <input type="hidden" id="idEdicao"> 
+
+                        <div class="form-venda-grid">
+                            <div class="field">
+                                <label>Cliente</label>
+                                <input type="text" id="clienteVenda" placeholder="Nome">
+                            </div>
+                            <div class="field">
+                                <label>Canal</label>
+                                <select id="tipoClienteVenda" style="padding: 10px; font-weight: bold;">
+                                    <option value="89">Final (R$ 89)</option>
+                                    <option value="58">PDV 1 (R$ 58)</option>
+                                    <option value="60">PDV 2 (R$ 60)</option>
+                                    <option value="46">Distrib. (R$ 46)</option>
+                                    <option value="custom">⚡ Personalizada</option>
+                                </select>
+                            </div>
+                            <div class="field" id="divValorCustom" style="display: none;">
+                                <label style="color:var(--blue)">Valor (R$)</label>
+                                <input type="number" id="valorVendaCustom" placeholder="0.00" style="border-color:var(--blue);">
+                            </div>
+                            <div class="field">
+                                <label>Qtd</label>
+                                <input type="number" id="qtdVendaNova" placeholder="0">
+                            </div>
+                            <div class="field-btn">
+                                <button id="btnSalvarVenda" class="btn-save" style="width:100%;">Registrar</button>
+                                <button id="btnCancelar" class="btn-cancel" style="display:none;">✕</button>
+                            </div>
+                        </div>
+
+                        <div style="margin-top: 30px;">
+                            <label>Progresso:</label>
+                            <div style="background:#eee; height:20px; border-radius:10px; overflow:hidden; margin-top:5px;">
+                                <div id="barraProgresso" style="background:var(--green); width:0%; height:100%; transition:0.8s;"></div>
+                            </div>
+                            <p id="msgMeta" style="text-align:center; font-size:0.8rem; margin-top:5px; color:#666;">Carregando...</p>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                            <label>Histórico Sincronizado:</label>
+                        </div>
+                        <div id="containerHistorico" class="historico-container">
+                            <p style="text-align:center; color:#999; margin-top:20px;">Carregando dados da nuvem...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="tab-calculadora" class="tab-content" style="display: none;">
+                <header class="header">
+                    <div>
+                        <h2>Painel de Custos</h2>
+                        <select id="filtroProduto" style="margin-top: 5px;">
+                            <option value="preto">Alfajor Preto</option>
+                            <option value="branco">Alfajor Branco</option>
+                        </select>
+                    </div>
+                </header>
+
+                <div class="stats-grid">
+                    <div class="card stat">
+                        <label>Custo Unitário</label>
+                        <h3 id="resUnid">R$ 0,00</h3>
+                    </div>
+                    <div class="card stat">
+                        <label>Lucro p/ Caixa</label>
+                        <h2 id="resLucro">R$ 0,00</h2>
+                    </div>
+                    <div class="card stat highlight">
+                        <label>Margem Real</label>
+                        <h2 id="resMargem">0%</h2>
+                    </div>
+                </div>
+
+                <section class="card config-panel">
+                    <h3>Preços de Compra (Insumos)</h3>
+                    <div class="input-grid">
+                        <div class="field"><label>Chocolate (kg)</label><input type="number" id="pChoc" value="16.67" step="0.01"></div>
+                        <div class="field"><label>Doce de Leite (kg)</label><input type="number" id="pDdl" value="22.90" step="0.01"></div>
+                        <div class="field"><label>Bolacha (kg)</label><input type="number" id="pBol" value="21.11" step="0.01"></div>
+                        <div class="field"><label>Emb. Unit (un)</label><input type="number" id="pEmb" value="0.05" step="0.01"></div>
+                        <div class="field"><label>Caixa Master (un)</label><input type="number" id="pMaster" value="2.85" step="0.01"></div>
+                        <div class="field"><label>Venda Base</label><input type="number" id="pVenda" value="85.00" class="venda-input"></div>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+    
+    <script type="module" src="script.js"></script>
+</body>
+</html>
