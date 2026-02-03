@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ki Alfajor - Gestor V18</title>
+    <title>Ki Alfajor - Gestor V19</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
@@ -23,8 +23,8 @@
                 </button>
             </nav>
             <div class="sidebar-footer">
-                <button id="btnSalvarGlobal" class="btn-save-global">☁️ Sincronizar Tudo</button>
-                <p style="font-size:0.7rem; color:#aaa; text-align:center; margin-top:5px;">Nuvem Conectada</p>
+                <button id="btnSalvarGlobal" class="btn-save-global">☁️ Forçar Sincronização</button>
+                <p style="font-size:0.7rem; color:#aaa; text-align:center; margin-top:5px;">Salvamento Automático</p>
             </div>
         </aside>
 
@@ -38,7 +38,7 @@
                             <span class="material-icons" style="font-size:18px; color:#666;">calendar_today</span>
                             <select id="filtroMesDashboard" style="padding:5px; border:1px solid #ccc; border-radius:5px; font-weight:bold; color:var(--primary);">
                                 <option value="todos">Todo o Período</option>
-                                </select>
+                            </select>
                         </div>
                     </div>
                     <div class="actions no-print">
@@ -48,8 +48,8 @@
 
                 <div class="stats-grid">
                     <div class="card stat">
-                        <label>Meta do Período (R$)</label>
-                        <input type="number" id="metaMes" value="5000" style="font-weight:bold; font-size:1.2rem; border:none; background:transparent; color:var(--primary);">
+                        <label>Meta do Mês (R$)</label>
+                        <input type="number" id="metaMes" onchange="salvarConfigAuto()" style="font-weight:bold; font-size:1.2rem; border:none; background:transparent; color:var(--primary); border-bottom: 2px dashed #eee;">
                     </div>
                     <div class="card stat highlight" style="border-top: 4px solid var(--green);">
                         <label>Faturamento</label>
@@ -100,7 +100,7 @@
                             <div style="background:#eee; height:20px; border-radius:10px; overflow:hidden; margin-top:5px;">
                                 <div id="barraProgresso" style="background:var(--green); width:0%; height:100%; transition:0.8s;"></div>
                             </div>
-                            <p id="msgMeta" style="text-align:center; font-size:0.8rem; margin-top:5px; color:#666;">...</p>
+                            <p id="msgMeta" style="text-align:center; font-size:0.8rem; margin-top:5px; color:#666;">Carregando...</p>
                         </div>
 
                         <div style="margin-top: 30px; border-top:1px dashed #eee; padding-top:20px;">
@@ -155,17 +155,18 @@
                 <section class="card config-panel">
                     <h3>Preços de Compra (Insumos)</h3>
                     <div class="input-grid">
-                        <div class="field"><label>Chocolate (kg)</label><input type="number" id="pChoc" value="16.67" step="0.01"></div>
-                        <div class="field"><label>Doce de Leite (kg)</label><input type="number" id="pDdl" value="22.90" step="0.01"></div>
-                        <div class="field"><label>Bolacha (kg)</label><input type="number" id="pBol" value="21.11" step="0.01"></div>
-                        <div class="field"><label>Emb. Unit (un)</label><input type="number" id="pEmb" value="0.05" step="0.01"></div>
-                        <div class="field"><label>Caixa Master (un)</label><input type="number" id="pMaster" value="2.85" step="0.01"></div>
-                        <div class="field"><label>Venda Base (Simulação)</label><input type="number" id="pVenda" value="85.00" class="venda-input"></div>
+                        <div class="field"><label>Chocolate (kg)</label><input type="number" id="pChoc" onchange="salvarConfigAuto()" step="0.01"></div>
+                        <div class="field"><label>Doce de Leite (kg)</label><input type="number" id="pDdl" onchange="salvarConfigAuto()" step="0.01"></div>
+                        <div class="field"><label>Bolacha (kg)</label><input type="number" id="pBol" onchange="salvarConfigAuto()" step="0.01"></div>
+                        <div class="field"><label>Emb. Unit (un)</label><input type="number" id="pEmb" onchange="salvarConfigAuto()" step="0.01"></div>
+                        <div class="field"><label>Caixa Master (un)</label><input type="number" id="pMaster" onchange="salvarConfigAuto()" step="0.01"></div>
+                        <div class="field"><label>Venda Base</label><input type="number" id="pVenda" onchange="salvarConfigAuto()" class="venda-input"></div>
                     </div>
                 </section>
             </div>
         </main>
     </div>
+    
     <script type="module" src="script.js"></script>
 </body>
 </html>
