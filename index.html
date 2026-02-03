@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ki Alfajor - Nuvem</title>
+    <title>Ki Alfajor - Gestor Pro</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
@@ -24,7 +24,7 @@
             </nav>
             <div class="sidebar-footer">
                 <button id="btnSalvarGlobal" class="btn-save-global">☁️ Sincronizar Tudo</button>
-                <p style="font-size:0.7rem; color:#aaa; text-align:center; margin-top:5px;">Dados na Nuvem</p>
+                <p style="font-size:0.7rem; color:#aaa; text-align:center; margin-top:5px;">Conectado à Nuvem</p>
             </div>
         </aside>
 
@@ -37,7 +37,7 @@
 
                 <div class="stats-grid">
                     <div class="card stat">
-                        <label>Meta (R$)</label>
+                        <label>Meta do Mês (R$)</label>
                         <input type="number" id="metaMes" value="5000" style="font-weight:bold; font-size:1.2rem; border:none; background:transparent; color:var(--primary);">
                     </div>
                     <div class="card stat highlight" style="border-top: 4px solid var(--green);">
@@ -61,7 +61,7 @@
                                 <input type="text" id="clienteVenda" placeholder="Nome">
                             </div>
                             <div class="field">
-                                <label>Canal</label>
+                                <label>Canal / Preço</label>
                                 <select id="tipoClienteVenda" style="padding: 10px; font-weight: bold;">
                                     <option value="89">Final (R$ 89)</option>
                                     <option value="58">PDV 1 (R$ 58)</option>
@@ -71,7 +71,7 @@
                                 </select>
                             </div>
                             <div class="field" id="divValorCustom" style="display: none;">
-                                <label style="color:var(--blue)">Valor (R$)</label>
+                                <label style="color:var(--blue)">Valor Unit. (R$)</label>
                                 <input type="number" id="valorVendaCustom" placeholder="0.00" style="border-color:var(--blue);">
                             </div>
                             <div class="field">
@@ -85,11 +85,18 @@
                         </div>
 
                         <div style="margin-top: 30px;">
-                            <label>Progresso:</label>
+                            <label>Progresso da Meta:</label>
                             <div style="background:#eee; height:20px; border-radius:10px; overflow:hidden; margin-top:5px;">
                                 <div id="barraProgresso" style="background:var(--green); width:0%; height:100%; transition:0.8s;"></div>
                             </div>
                             <p id="msgMeta" style="text-align:center; font-size:0.8rem; margin-top:5px; color:#666;">Carregando...</p>
+                        </div>
+
+                        <div style="margin-top: 30px; border-top:1px dashed #eee; padding-top:20px;">
+                            <label style="margin-bottom:15px; display:block;">Faturamento por Canal:</label>
+                            <div id="containerGraficos" style="min-height: 50px;">
+                                <p style="font-size:0.8rem; color:#ccc; text-align:center;">Registre uma venda para ver o gráfico.</p>
+                            </div>
                         </div>
                     </div>
 
@@ -98,7 +105,7 @@
                             <label>Histórico Sincronizado:</label>
                         </div>
                         <div id="containerHistorico" class="historico-container">
-                            <p style="text-align:center; color:#999; margin-top:20px;">Carregando dados da nuvem...</p>
+                            <p style="text-align:center; color:#999; margin-top:20px;">Carregando dados...</p>
                         </div>
                     </div>
                 </div>
@@ -109,7 +116,7 @@
                     <div>
                         <h2>Painel de Custos</h2>
                         <select id="filtroProduto" style="margin-top: 5px;">
-                            <option value="preto">Alfajor Preto</option>
+                            <option value="preto">Alfajor Preto (Tradicional)</option>
                             <option value="branco">Alfajor Branco</option>
                         </select>
                     </div>
@@ -121,6 +128,10 @@
                         <h3 id="resUnid">R$ 0,00</h3>
                     </div>
                     <div class="card stat">
+                        <label>Custo Caixa (16un)</label>
+                        <h3 id="resCaixa">R$ 0,00</h3>
+                    </div>
+                    <div class="card stat highlight">
                         <label>Lucro p/ Caixa</label>
                         <h2 id="resLucro">R$ 0,00</h2>
                     </div>
@@ -138,7 +149,7 @@
                         <div class="field"><label>Bolacha (kg)</label><input type="number" id="pBol" value="21.11" step="0.01"></div>
                         <div class="field"><label>Emb. Unit (un)</label><input type="number" id="pEmb" value="0.05" step="0.01"></div>
                         <div class="field"><label>Caixa Master (un)</label><input type="number" id="pMaster" value="2.85" step="0.01"></div>
-                        <div class="field"><label>Venda Base</label><input type="number" id="pVenda" value="85.00" class="venda-input"></div>
+                        <div class="field"><label>Venda Base (Simulação)</label><input type="number" id="pVenda" value="85.00" class="venda-input"></div>
                     </div>
                 </section>
             </div>
