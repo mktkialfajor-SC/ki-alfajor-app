@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ki Alfajor - Gestor Pro</title>
+    <title>Ki Alfajor - Gestor V18</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
@@ -24,7 +24,7 @@
             </nav>
             <div class="sidebar-footer">
                 <button id="btnSalvarGlobal" class="btn-save-global">☁️ Sincronizar Tudo</button>
-                <p style="font-size:0.7rem; color:#aaa; text-align:center; margin-top:5px;">Conectado à Nuvem</p>
+                <p style="font-size:0.7rem; color:#aaa; text-align:center; margin-top:5px;">Nuvem Conectada</p>
             </div>
         </aside>
 
@@ -32,12 +32,23 @@
             
             <div id="tab-vendas" class="tab-content active">
                 <header class="header">
-                    <h2>🚀 Performance (Tempo Real)</h2>
+                    <div>
+                        <h2>🚀 Performance</h2>
+                        <div style="display:flex; align-items:center; gap:10px; margin-top:5px;">
+                            <span class="material-icons" style="font-size:18px; color:#666;">calendar_today</span>
+                            <select id="filtroMesDashboard" style="padding:5px; border:1px solid #ccc; border-radius:5px; font-weight:bold; color:var(--primary);">
+                                <option value="todos">Todo o Período</option>
+                                </select>
+                        </div>
+                    </div>
+                    <div class="actions no-print">
+                        <button id="btnExportarExcel" class="btn-excel">📊 Excel</button>
+                    </div>
                 </header>
 
                 <div class="stats-grid">
                     <div class="card stat">
-                        <label>Meta do Mês (R$)</label>
+                        <label>Meta do Período (R$)</label>
                         <input type="number" id="metaMes" value="5000" style="font-weight:bold; font-size:1.2rem; border:none; background:transparent; color:var(--primary);">
                     </div>
                     <div class="card stat highlight" style="border-top: 4px solid var(--green);">
@@ -61,7 +72,7 @@
                                 <input type="text" id="clienteVenda" placeholder="Nome">
                             </div>
                             <div class="field">
-                                <label>Canal / Preço</label>
+                                <label>Canal</label>
                                 <select id="tipoClienteVenda" style="padding: 10px; font-weight: bold;">
                                     <option value="89">Final (R$ 89)</option>
                                     <option value="58">PDV 1 (R$ 58)</option>
@@ -71,7 +82,7 @@
                                 </select>
                             </div>
                             <div class="field" id="divValorCustom" style="display: none;">
-                                <label style="color:var(--blue)">Valor Unit. (R$)</label>
+                                <label style="color:var(--blue)">Valor Unit.</label>
                                 <input type="number" id="valorVendaCustom" placeholder="0.00" style="border-color:var(--blue);">
                             </div>
                             <div class="field">
@@ -89,23 +100,23 @@
                             <div style="background:#eee; height:20px; border-radius:10px; overflow:hidden; margin-top:5px;">
                                 <div id="barraProgresso" style="background:var(--green); width:0%; height:100%; transition:0.8s;"></div>
                             </div>
-                            <p id="msgMeta" style="text-align:center; font-size:0.8rem; margin-top:5px; color:#666;">Carregando...</p>
+                            <p id="msgMeta" style="text-align:center; font-size:0.8rem; margin-top:5px; color:#666;">...</p>
                         </div>
 
                         <div style="margin-top: 30px; border-top:1px dashed #eee; padding-top:20px;">
                             <label style="margin-bottom:15px; display:block;">Faturamento por Canal:</label>
                             <div id="containerGraficos" style="min-height: 50px;">
-                                <p style="font-size:0.8rem; color:#ccc; text-align:center;">Registre uma venda para ver o gráfico.</p>
+                                <p style="font-size:0.8rem; color:#ccc; text-align:center;">Sem dados no período.</p>
                             </div>
                         </div>
                     </div>
 
                     <div>
                         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-                            <label>Histórico Sincronizado:</label>
+                            <label>Histórico Filtrado:</label>
                         </div>
                         <div id="containerHistorico" class="historico-container">
-                            <p style="text-align:center; color:#999; margin-top:20px;">Carregando dados...</p>
+                            <p style="text-align:center; color:#999; margin-top:20px;">Carregando...</p>
                         </div>
                     </div>
                 </div>
@@ -116,7 +127,7 @@
                     <div>
                         <h2>Painel de Custos</h2>
                         <select id="filtroProduto" style="margin-top: 5px;">
-                            <option value="preto">Alfajor Preto (Tradicional)</option>
+                            <option value="preto">Alfajor Preto</option>
                             <option value="branco">Alfajor Branco</option>
                         </select>
                     </div>
@@ -155,7 +166,6 @@
             </div>
         </main>
     </div>
-    
     <script type="module" src="script.js"></script>
 </body>
 </html>
