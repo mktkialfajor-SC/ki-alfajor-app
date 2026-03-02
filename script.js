@@ -5,7 +5,7 @@ from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 // --- CONFIGURAÇÃO ---
 const firebaseConfig = {
-    apiKey: "AIzaSyDCax_ecXH7frblalUFKIEtV_iXbe-Iy3E",
+  apiKey: "AIzaSyDCax_ecXH7frblalUFKIEtV_iXbe-Iy3E",
   authDomain: "ki-alfajor-app.firebaseapp.com",
   projectId: "ki-alfajor-app",
   storageBucket: "ki-alfajor-app.firebasestorage.app",
