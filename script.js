@@ -5,12 +5,12 @@ from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 // --- CONFIGURAÇÃO ---
 const firebaseConfig = {
-    apiKey: "COLE_SUA_API_KEY_AQUI", // <--- COLE SUA CHAVE AQUI
-    authDomain: "ki-alfajor-app.firebaseapp.com",
-    projectId: "ki-alfajor-app",
-    storageBucket: "ki-alfajor-app.appspot.com",
-    messagingSenderId: "SEU_MESSAGING_ID",
-    appId: "SEU_APP_ID"
+    apiKey: "AIzaSyDCax_ecXH7frblalUFKIEtV_iXbe-Iy3E",
+  authDomain: "ki-alfajor-app.firebaseapp.com",
+  projectId: "ki-alfajor-app",
+  storageBucket: "ki-alfajor-app.firebasestorage.app",
+  messagingSenderId: "616340676592",
+  appId: "1:616340676592:web:6af23611e198fee2af0735"
 };
 
 const app = initializeApp(firebaseConfig);
@@ -18,10 +18,6 @@ const db = getFirestore(app);
 
 // --- ESTADO GLOBAL ---
 let listaVendas = [];
-const fichas = {
-    preto: { chocolate: 0.012, doceDeLeite: 0.035, bolacha: 0.008 },
-    branco: { chocolate: 0.015, doceDeLeite: 0.035, bolacha: 0.008 }
-};
 
 // --- LISTENERS (Escutam o Banco) ---
 const q = query(collection(db, "vendas"), orderBy("data", "desc"));
@@ -34,36 +30,17 @@ onSnapshot(q, (snapshot) => {
 onSnapshot(doc(db, "config", "geral"), (docSnap) => {
     if (docSnap.exists()) {
         const d = docSnap.data();
-        // Atualiza campos apenas se o usuário não estiver focado neles (para não atrapalhar digitação)
-        const set = (id, v) => { 
-            const el = document.getElementById(id);
-            if(el && document.activeElement !== el) el.value = v; 
-        }
-        set('pChoc', d.pChoc); set('pDdl', d.pDdl); set('pBol', d.pBol);
-        set('pEmb', d.pEmb); set('pMaster', d.pMaster); set('pVenda', d.pVenda);
-        set('metaMes', d.metaMes);
-        calcular();
+        const el = document.getElementById('metaMes');
+        if(el && document.activeElement !== el) el.value = d.metaMes || 5000; 
         atualizarPainelVendas();
     }
 });
 
-// --- SALVAMENTO AUTOMÁTICO (NOVA FUNÇÃO) ---
+// --- SALVAMENTO AUTOMÁTICO ---
 window.salvarConfigAuto = async () => {
-    const dados = {
-        pChoc: document.getElementById('pChoc').value, 
-        pDdl: document.getElementById('pDdl').value,
-        pBol: document.getElementById('pBol').value, 
-        pEmb: document.getElementById('pEmb').value,
-        pMaster: document.getElementById('pMaster').value, 
-        pVenda: document.getElementById('pVenda').value,
-        metaMes: document.getElementById('metaMes').value
-    };
-    
-    // Usa 'merge: true' para atualizar sem apagar o resto
+    const dados = { metaMes: document.getElementById('metaMes').value };
     try {
         await setDoc(doc(db, "config", "geral"), dados, { merge: true });
-        // Opcional: Poderia colocar um aviso visual, mas o listener já atualiza
-        console.log("Configurações salvas automaticamente.");
     } catch (e) {
         console.error("Erro ao salvar config auto:", e);
     }
@@ -72,12 +49,13 @@ window.salvarConfigAuto = async () => {
 // --- EXPORTAR EXCEL ---
 window.exportarExcel = () => {
     if (listaVendas.length === 0) { alert("Sem dados."); return; }
-    let csvContent = "data:text/csv;charset=utf-8,Data;Cliente;Tipo;Qtd;Valor Unit;Total\r\n";
+    let csvContent = "data:text/csv;charset=utf-8,Data;Cliente;Canal;Pagamento;Qtd;Valor Unit;Total\r\n";
     listaVendas.forEach(v => {
         const data = new Date(v.data || v.id).toLocaleDateString('pt-BR');
         const total = v.total.toFixed(2).replace('.', ',');
         const unit = v.precoUnit.toFixed(2).replace('.', ',');
-        const row = `${data};${v.cliente};${v.tipo};${v.qtd};${unit};${total}`;
+        const pagamento = v.pagamento || "Não informado";
+        const row = `${data};${v.cliente};${v.tipo};${pagamento};${v.qtd};${unit};${total}`;
         csvContent += row + "\r\n";
     });
     const encodedUri = encodeURI(csvContent);
@@ -89,17 +67,21 @@ window.exportarExcel = () => {
     document.body.removeChild(link);
 };
 
-// --- FILTRO DE MÊS ---
+// --- FILTRO DE MÊS INTELIGENTE ---
 function preencherFiltroMeses() {
     const select = document.getElementById('filtroMesDashboard');
     const valorAtual = select.value;
     const mesesUnicos = new Set();
+    
     listaVendas.forEach(v => {
         const d = new Date(v.data || v.id);
         mesesUnicos.add(`${d.getFullYear()}-${d.getMonth()}`);
     });
+    
     const hoje = new Date();
-    mesesUnicos.add(`${hoje.getFullYear()}-${hoje.getMonth()}`);
+    const mesAtualChave = `${hoje.getFullYear()}-${hoje.getMonth()}`;
+    mesesUnicos.add(mesAtualChave); 
+    
     select.innerHTML = '<option value="todos">Todo o Período</option>';
     Array.from(mesesUnicos).sort().reverse().forEach(chave => {
         const [ano, mesIndex] = chave.split('-');
@@ -109,8 +91,15 @@ function preencherFiltroMeses() {
         option.text = nomeMes.charAt(0).toUpperCase() + nomeMes.slice(1);
         select.appendChild(option);
     });
-    if (valorAtual && Array.from(select.options).some(o => o.value === valorAtual)) select.value = valorAtual;
-    else select.value = `${hoje.getFullYear()}-${hoje.getMonth()}`;
+
+    if (!window.filtroIniciado) {
+        select.value = mesAtualChave;
+        window.filtroIniciado = true;
+    } else if (valorAtual && Array.from(select.options).some(o => o.value === valorAtual)) {
+        select.value = valorAtual;
+    } else {
+        select.value = mesAtualChave;
+    }
 }
 
 // --- RENDERIZAÇÃO ---
@@ -153,7 +142,7 @@ function renderizarHistorico(vendas) {
     const container = document.getElementById('containerHistorico');
     if(!container) return;
     container.innerHTML = "";
-    if (vendas.length === 0) { container.innerHTML = "<p style='text-align:center; color:#999; margin-top:20px;'>Sem dados.</p>"; return; }
+    if (vendas.length === 0) { container.innerHTML = "<p style='text-align:center; color:#999; margin-top:20px;'>Sem dados neste mês.</p>"; return; }
 
     const grupos = {};
     vendas.forEach(v => {
@@ -180,9 +169,13 @@ function renderizarHistorico(vendas) {
                 divSemana.className = 'grupo-semana';
                 let html = `<span class="header-semana">${semana}</span><table class="mini-tabela">`;
                 grupos[ano][mes][semana].forEach(v => {
+                    
+                    let unidade = v.tipo === "Personalizada" ? "un" : "cx";
+                    let alertaPgto = v.pagamento === "Deve" ? `<br><span style="color:var(--red); font-size:0.7rem; font-weight:bold;">⚠️ DEVE</span>` : `<br><span style="color:#888; font-size:0.7rem;">${v.pagamento || 'Pix'}</span>`;
+
                     html += `<tr>
-                        <td width="30%"><strong>${v.cliente}</strong></td>
-                        <td width="15%">${v.qtd}cx</td>
+                        <td width="30%"><strong>${v.cliente}</strong>${alertaPgto}</td>
+                        <td width="15%">${v.qtd}${unidade}</td>
                         <td width="25%">${v.tipo}</td>
                         <td width="20%" style="font-weight:bold;">${formatar(v.total)}</td>
                         <td width="10%" style="text-align:right;">
@@ -219,54 +212,65 @@ function gerarGraficoDinamico(dados, total) {
     });
 }
 
-window.mudarAba = (aba) => {
-    document.querySelectorAll('.tab-content').forEach(el => el.style.display = 'none');
-    document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
-    document.getElementById('tab-' + aba).style.display = 'block';
-    document.getElementById('btn-' + aba).classList.add('active');
-};
+// --- FUNÇÕES DE FORMULÁRIO (Modificadas para aceitar Custom de novo) ---
 window.verificarTipoVenda = () => {
     const val = document.getElementById('tipoClienteVenda').value;
-    const div = document.getElementById('divValorCustom');
-    div.style.display = val === 'custom' ? 'block' : 'none';
+    const divValorCustom = document.getElementById('divValorCustom');
+    const label = document.getElementById('labelQtd');
+    
+    if (val === 'custom') {
+        divValorCustom.style.display = 'block';
+        label.innerText = 'Qtd (un)';
+    } else {
+        divValorCustom.style.display = 'none';
+        label.innerText = 'Qtd (cx)';
+    }
 };
-window.calcular = () => {
-    const prod = document.getElementById('filtroProduto') ? document.getElementById('filtroProduto').value : 'preto';
-    const f = fichas[prod];
-    const getVal = id => parseFloat(document.getElementById(id).value) || 0;
-    const pChoc = getVal('pChoc'), pDdl = getVal('pDdl'), pBol = getVal('pBol'), pEmb = getVal('pEmb'), pMaster = getVal('pMaster'), pVenda = getVal('pVenda');
-    const custoIngr = (pChoc * f.chocolate) + (pDdl * f.doceDeLeite) + (pBol * f.bolacha);
-    const custoUnit = custoIngr + pEmb;
-    const custoCaixa = (custoUnit * 16) + pMaster;
-    const lucro = pVenda - custoCaixa;
-    const margem = pVenda > 0 ? (lucro / pVenda) * 100 : 0;
-    document.getElementById('resUnid').innerText = formatar(custoUnit);
-    document.getElementById('resLucro').innerText = formatar(lucro);
-    document.getElementById('resMargem').innerText = margem.toFixed(1) + "%";
-    document.getElementById('resCaixa').innerText = formatar(custoCaixa);
-};
+
 window.salvarOuAtualizarVenda = async () => {
     const idEdicao = document.getElementById('idEdicao').value;
     const cliente = document.getElementById('clienteVenda').value;
     const qtd = parseInt(document.getElementById('qtdVendaNova').value);
+    const pagamento = document.getElementById('pagamentoVenda').value;
     const select = document.getElementById('tipoClienteVenda');
+    
     let precoUnit = parseFloat(select.value);
     let tipoNome = select.options[select.selectedIndex].text.split('(')[0].trim();
-    if (select.value === 'custom') { precoUnit = parseFloat(document.getElementById('valorVendaCustom').value); tipoNome = "Personalizada"; }
-    if (!cliente || !qtd) { alert("Preencha tudo!"); return; }
-    const dados = { cliente, qtd, tipo: tipoNome, precoUnit, total: qtd * precoUnit, data: Date.now() };
+    
+    // Captura o valor digitado se for personalizada
+    if (select.value === 'custom') { 
+        precoUnit = parseFloat(document.getElementById('valorVendaCustom').value);
+        tipoNome = "Personalizada"; 
+    }
+
+    if (!cliente || !qtd || isNaN(precoUnit)) { alert("Preencha cliente, valor e quantidade corretamente!"); return; }
+    
+    const dados = { 
+        cliente, 
+        qtd, 
+        tipo: tipoNome, 
+        precoUnit, 
+        total: qtd * precoUnit, 
+        pagamento, 
+        data: Date.now() 
+    };
+    
     try {
         if (idEdicao) await updateDoc(doc(db, "vendas", idEdicao), dados);
         else await addDoc(collection(db, "vendas"), dados);
         window.cancelarEdicao();
     } catch (e) { console.error(e); alert("Erro na nuvem."); }
 };
+
 window.excluirVenda = async (id) => { if(confirm("Apagar?")) await deleteDoc(doc(db, "vendas", id)); };
+
 window.prepararEdicao = (id) => {
     const venda = listaVendas.find(v => v.id === id); if (!venda) return;
     document.getElementById('idEdicao').value = venda.id;
     document.getElementById('clienteVenda').value = venda.cliente;
     document.getElementById('qtdVendaNova').value = venda.qtd;
+    document.getElementById('pagamentoVenda').value = venda.pagamento || "Pix";
+    
     const select = document.getElementById('tipoClienteVenda');
     let achou = false;
     for (let i = 0; i < select.options.length; i++) {
@@ -274,22 +278,33 @@ window.prepararEdicao = (id) => {
             select.selectedIndex = i; achou = true; break;
         }
     }
-    if (!achou) { select.value = 'custom'; document.getElementById('valorVendaCustom').value = venda.precoUnit; }
+    
+    if (!achou) { 
+        select.value = 'custom'; 
+        document.getElementById('valorVendaCustom').value = venda.precoUnit; 
+    }
+    
     window.verificarTipoVenda();
-    document.getElementById('tituloFormulario').innerText = "Editando";
+    document.getElementById('tituloFormulario').innerText = "Editando Venda";
     document.getElementById('tituloFormulario').style.color = "var(--blue)";
     document.getElementById('btnSalvarVenda').innerText = "Atualizar";
     document.getElementById('btnCancelar').style.display = "block";
 };
+
 window.cancelarEdicao = () => {
-    document.getElementById('idEdicao').value = ""; document.getElementById('clienteVenda').value = "";
-    document.getElementById('qtdVendaNova').value = ""; document.getElementById('valorVendaCustom').value = "";
-    document.getElementById('tipoClienteVenda').selectedIndex = 0; window.verificarTipoVenda();
+    document.getElementById('idEdicao').value = ""; 
+    document.getElementById('clienteVenda').value = "";
+    document.getElementById('qtdVendaNova').value = ""; 
+    document.getElementById('valorVendaCustom').value = "";
+    document.getElementById('pagamentoVenda').value = "Pix";
+    document.getElementById('tipoClienteVenda').selectedIndex = 0; 
+    window.verificarTipoVenda();
     document.getElementById('tituloFormulario').innerText = "Nova Venda";
     document.getElementById('tituloFormulario').style.color = "inherit";
     document.getElementById('btnSalvarVenda').innerText = "Registrar";
     document.getElementById('btnCancelar').style.display = "none";
 };
+
 function getNumeroSemana(d) {
     const date = new Date(d.getTime()); date.setHours(0, 0, 0, 0);
     date.setDate(date.getDate() + 3 - (date.getDay() + 6) % 7);
@@ -298,15 +313,11 @@ function getNumeroSemana(d) {
 }
 function formatar(v) { return v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }); }
 
-document.getElementById('btn-vendas').onclick = () => window.mudarAba('vendas');
-document.getElementById('btn-calculadora').onclick = () => window.mudarAba('calculadora');
-document.getElementById('btnSalvarGlobal').onclick = window.salvarConfigAuto; // Botão manual agora chama a mesma função
+document.getElementById('btnSalvarGlobal').onclick = window.salvarConfigAuto;
 document.getElementById('btnSalvarVenda').onclick = window.salvarOuAtualizarVenda;
 document.getElementById('btnCancelar').onclick = window.cancelarEdicao;
-document.getElementById('filtroProduto').onchange = window.calcular;
 document.getElementById('btnExportarExcel').onclick = window.exportarExcel;
-document.querySelectorAll('input').forEach(i => i.oninput = window.calcular);
 document.getElementById('filtroMesDashboard').onchange = window.atualizarPainelVendas;
 document.getElementById('tipoClienteVenda').onchange = window.verificarTipoVenda;
 
-window.mudarAba('vendas');
+window.verificarTipoVenda();

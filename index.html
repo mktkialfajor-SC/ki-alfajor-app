@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ki Alfajor - Gestor V19</title>
+    <title>Ki Alfajor - Gestor V20.1</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
@@ -18,9 +18,6 @@
                 <button id="btn-vendas" class="nav-btn active">
                     <span class="material-icons">rocket_launch</span> Performance
                 </button>
-                <button id="btn-calculadora" class="nav-btn">
-                    <span class="material-icons">calculate</span> Painel de Custos
-                </button>
             </nav>
             <div class="sidebar-footer">
                 <button id="btnSalvarGlobal" class="btn-save-global">☁️ Forçar Sincronização</button>
@@ -29,7 +26,6 @@
         </aside>
 
         <main class="main-content">
-            
             <div id="tab-vendas" class="tab-content active">
                 <header class="header">
                     <div>
@@ -81,14 +77,27 @@
                                     <option value="custom">⚡ Personalizada</option>
                                 </select>
                             </div>
+                            
                             <div class="field" id="divValorCustom" style="display: none;">
-                                <label style="color:var(--blue)">Valor Unit.</label>
+                                <label style="color:var(--blue)">Valor Venda (R$)</label>
                                 <input type="number" id="valorVendaCustom" placeholder="0.00" style="border-color:var(--blue);">
                             </div>
+
                             <div class="field">
-                                <label>Qtd</label>
+                                <label>Pagamento</label>
+                                <select id="pagamentoVenda" style="padding: 10px; font-weight: bold;">
+                                    <option value="Pix">PIX</option>
+                                    <option value="Dinheiro">Dinheiro</option>
+                                    <option value="Cartão">Cartão</option>
+                                    <option value="Deve">⚠️ Deve (Falta Pagar)</option>
+                                </select>
+                            </div>
+
+                            <div class="field">
+                                <label id="labelQtd">Qtd (cx)</label>
                                 <input type="number" id="qtdVendaNova" placeholder="0">
                             </div>
+
                             <div class="field-btn">
                                 <button id="btnSalvarVenda" class="btn-save" style="width:100%;">Registrar</button>
                                 <button id="btnCancelar" class="btn-cancel" style="display:none;">✕</button>
@@ -120,49 +129,6 @@
                         </div>
                     </div>
                 </div>
-            </div>
-
-            <div id="tab-calculadora" class="tab-content" style="display: none;">
-                <header class="header">
-                    <div>
-                        <h2>Painel de Custos</h2>
-                        <select id="filtroProduto" style="margin-top: 5px;">
-                            <option value="preto">Alfajor Preto</option>
-                            <option value="branco">Alfajor Branco</option>
-                        </select>
-                    </div>
-                </header>
-
-                <div class="stats-grid">
-                    <div class="card stat">
-                        <label>Custo Unitário</label>
-                        <h3 id="resUnid">R$ 0,00</h3>
-                    </div>
-                    <div class="card stat">
-                        <label>Custo Caixa (16un)</label>
-                        <h3 id="resCaixa">R$ 0,00</h3>
-                    </div>
-                    <div class="card stat highlight">
-                        <label>Lucro p/ Caixa</label>
-                        <h2 id="resLucro">R$ 0,00</h2>
-                    </div>
-                    <div class="card stat highlight">
-                        <label>Margem Real</label>
-                        <h2 id="resMargem">0%</h2>
-                    </div>
-                </div>
-
-                <section class="card config-panel">
-                    <h3>Preços de Compra (Insumos)</h3>
-                    <div class="input-grid">
-                        <div class="field"><label>Chocolate (kg)</label><input type="number" id="pChoc" onchange="salvarConfigAuto()" step="0.01"></div>
-                        <div class="field"><label>Doce de Leite (kg)</label><input type="number" id="pDdl" onchange="salvarConfigAuto()" step="0.01"></div>
-                        <div class="field"><label>Bolacha (kg)</label><input type="number" id="pBol" onchange="salvarConfigAuto()" step="0.01"></div>
-                        <div class="field"><label>Emb. Unit (un)</label><input type="number" id="pEmb" onchange="salvarConfigAuto()" step="0.01"></div>
-                        <div class="field"><label>Caixa Master (un)</label><input type="number" id="pMaster" onchange="salvarConfigAuto()" step="0.01"></div>
-                        <div class="field"><label>Venda Base</label><input type="number" id="pVenda" onchange="salvarConfigAuto()" class="venda-input"></div>
-                    </div>
-                </section>
             </div>
         </main>
     </div>

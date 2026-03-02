@@ -18,9 +18,10 @@ body { font-family: 'Inter', sans-serif; margin: 0; background: var(--bg); color
 .card { background: var(--white); border-radius: 16px; padding: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.04); }
 .stat.highlight { border-top: 4px solid var(--accent); }
 .main-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; }
-.input-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 15px; }
-.form-venda-grid { display: grid; grid-template-columns: 1.5fr 1fr 0.8fr 1fr; gap: 10px; align-items: end; }
-.field-btn { display: flex; gap: 5px; }
+
+/* Grid do Formulário Atualizado para 4 Colunas */
+.form-venda-grid { display: grid; grid-template-columns: 1fr 1fr 1fr 0.8fr; gap: 10px; align-items: end; }
+.field-btn { grid-column: 1 / -1; display: flex; gap: 5px; margin-top: 5px; } /* O botão agora fica embaixo, largo */
 
 label { font-size: 0.75rem; color: #666; font-weight: bold; margin-bottom: 5px; display: block; }
 input, select { width: 100%; padding: 10px; border: 1px solid #eee; border-radius: 8px; box-sizing: border-box; }
@@ -47,4 +48,10 @@ input, select { width: 100%; padding: 10px; border: 1px solid #eee; border-radiu
 .btn-icon { background: none; border: none; cursor: pointer; padding: 4px; border-radius: 4px; display: inline-flex; }
 .btn-icon.edit { color: var(--blue); } .btn-icon.del { color: var(--red); } .material-icons { font-size: 18px; }
 
-@media (max-width: 900px) { .app-container { flex-direction: column; } .sidebar { width: 100%; box-sizing: border-box; } .main-grid { grid-template-columns: 1fr; } .form-venda-grid { grid-template-columns: 1fr 1fr; } .input-grid { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 900px) { 
+    .app-container { flex-direction: column; } 
+    .sidebar { width: 100%; box-sizing: border-box; } 
+    .main-grid { grid-template-columns: 1fr; } 
+    /* No celular o formulário vira 2 colunas */
+    .form-venda-grid { grid-template-columns: 1fr 1fr; } 
+}
